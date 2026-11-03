@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Radio Catrachos de Corazon - Live Info</title>
+    <title>Radio Catrachos de Corazon - Oficial</title>
     <style>
         body {
             margin: 0;
@@ -14,190 +14,48 @@
             font-family: 'Segoe UI', Arial, sans-serif;
         }
         .cyber-card {
-            width: 380px;
+            width: 400px;
             background: linear-gradient(145deg, #110d08, #050302);
             border: 2px solid #00ffcc;
             border-radius: 18px;
             box-shadow: 0 0 35px rgba(0, 255, 204, 0.4);
-            padding: 24px;
+            padding: 20px;
             box-sizing: border-box;
             text-align: center;
             color: #fff;
         }
         .station-header {
-            font-size: 15px;
+            font-size: 14px;
             color: #00ffcc;
             font-weight: 900;
-            margin-bottom: 16px;
+            margin-bottom: 14px;
             text-transform: uppercase;
             letter-spacing: 2px;
             text-shadow: 0 0 10px rgba(0, 255, 204, 0.6);
         }
-        .screen-container {
+        .player-frame-container {
             width: 100%;
-            height: 110px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             background: #000;
             border-radius: 12px;
             border: 1px solid #00ffcc;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            margin-bottom: 16px;
-            position: relative;
             overflow: hidden;
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.9);
-        }
-        .wave-bars {
-            display: flex;
-            gap: 6px;
-            align-items: flex-end;
-            height: 40px;
-            margin-bottom: 8px;
-        }
-        .bar {
-            width: 7px;
-            background: #00ffcc;
-            height: 10px;
-            border-radius: 3px;
-            box-shadow: 0 0 10px #00ffcc;
-            transition: height 0.2s ease;
-        }
-        .playing .bar {
-            animation: pulseWave 0.7s infinite alternate ease-in-out;
-        }
-        .playing .bar:nth-child(1) { animation-delay: 0.1s; }
-        .playing .bar:nth-child(2) { animation-delay: 0.3s; }
-        .playing .bar:nth-child(3) { animation-delay: 0.5s; }
-        .playing .bar:nth-child(4) { animation-delay: 0.2s; }
-        .playing .bar:nth-child(5) { animation-delay: 0.4s; }
-
-        @keyframes pulseWave {
-            0% { height: 10px; }
-            100% { height: 40px; }
-        }
-
-        .status-text {
-            font-size: 11px;
-            color: #00ffcc;
-            font-weight: bold;
-            letter-spacing: 1.5px;
-        }
-
-        .info-box {
-            font-size: 13px;
-            color: #ffffff;
-            background: rgba(0, 255, 204, 0.1);
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 18px;
-            border: 1px solid rgba(0, 255, 204, 0.3);
-            word-break: break-word;
-            min-height: 25px;
-        }
-        .controls {
-            display: flex;
-            justify-content: center;
-            gap: 14px;
-        }
-        button {
-            background: #00ffcc;
-            color: #000;
-            border: none;
-            padding: 12px 28px;
-            font-weight: 900;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: all 0.2s ease;
-            box-shadow: 0 0 15px rgba(0, 255, 204, 0.5);
-            text-transform: uppercase;
-        }
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 0 22px #00ffcc;
+            padding: 10px 0;
         }
     </style>
 </head>
 <body>
 
-    <div class="cyber-card" id="playerCard">
+    <div class="cyber-card">
         <div class="station-header">Radio Catrachos de Corazon</div>
         
-        <div class="screen-container">
-            <div class="wave-bars">
-                <div class="bar"></div>
-                <div class="bar"></div>
-                <div class="bar"></div>
-                <div class="bar"></div>
-                <div class="bar"></div>
-            </div>
-            <div class="status-text" id="statusLabel">EN ESPERA</div>
-        </div>
-
-        <!-- Aquí aparecerá el artista y la canción en vivo -->
-        <div class="info-box" id="songInfo">Cargando información del DJ...</div>
-
-        <div class="controls">
-            <button onclick="playRadio()">▶ PLAY</button>
-            <button onclick="stopRadio()">⏹ STOP</button>
+        <div class="player-frame-container">
+            <!-- Reproductor oficial incrustado para mostrar título y DJ correctamente -->
+            <iframe src="https://radio.technoplayerserver.com/public/radio_catrachos_de_corazon" width="100%" height="150px" frameborder="0" allowtransparency="true" scrolling="no"></iframe>
         </div>
     </div>
 
-    <audio id="radioStream" src="https://radio.technoplayerserver.com/8010/stream"></audio>
-
-    <script>
-        const audio = document.getElementById('radioStream');
-        const songInfo = document.getElementById('songInfo');
-        const statusLabel = document.getElementById('statusLabel');
-        const playerCard = document.getElementById('playerCard');
-
-        function playRadio() {
-            audio.play().catch(e => console.log("Error:", e));
-            statusLabel.innerText = "EN DIRECTO";
-            playerCard.classList.add('playing');
-        }
-
-        function stopRadio() {
-            audio.pause();
-            audio.currentTime = 0;
-            statusLabel.innerText = "EN ESPERA";
-            songInfo.innerText = "Transmisión detenida";
-            playerCard.classList.remove('playing');
-        }
-
-        // Función para consultar los metadatos de la canción y DJ en vivo
-        function updateMetadata() {
-            // Nota: Usamos un servicio proxy CORS público para leer los datos JSON de tu servidor Icecast/Shoutcast de forma segura
-            fetch('https://api.allorigins.win/get?url=' + encodeURIComponent('https://radio.technoplayerserver.com/status-json.xsl'))
-                .then(response => response.json())
-                .then(data => {
-                    try {
-                        const parsed = JSON.parse(data.contents);
-                        // Busca la fuente activa en el servidor
-                        const source = Array.isArray(parsed.icestats.source) 
-                            ? parsed.icestats.source.find(s => s.listenurl.includes('8010')) 
-                            : parsed.icestats.source;
-
-                        if (source && source.title) {
-                            songInfo.innerText = "🎵 " + source.title;
-                        } else {
-                            songInfo.innerText = "🎵 Radio Catrachos de Corazon (En Vivo)";
-                        }
-                    } catch (e) {
-                        // Si el servidor usa otro formato, dejamos un texto predeterminado activo
-                        songInfo.innerText = "🎵 Transmitiendo en directo";
-                    }
-                })
-                .catch(() => {
-                    // Mensaje por si la red bloquea temporalmente la consulta externa
-                    songInfo.innerText = "🎵 Radio Catrachos de Corazon";
-                });
-        }
-
-        // Actualiza el nombre de la canción cada 10 segundos automáticamente
-        setInterval(updateMetadata, 10000);
-        updateMetadata();
-    </script>
 </body>
 </html>
