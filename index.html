@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Radio Catrachos de Corazon - Dark Gold Player</title>
+    <title>Radio Catrachos de Corazon - Live Info</title>
     <style>
         body {
             margin: 0;
@@ -16,9 +16,9 @@
         .cyber-card {
             width: 380px;
             background: linear-gradient(145deg, #110d08, #050302);
-            border: 2px solid #ff7700;
+            border: 2px solid #00ffcc;
             border-radius: 18px;
-            box-shadow: 0 0 35px rgba(255, 119, 0, 0.45), inset 0 0 20px rgba(255, 187, 0, 0.15);
+            box-shadow: 0 0 35px rgba(0, 255, 204, 0.4);
             padding: 24px;
             box-sizing: border-box;
             text-align: center;
@@ -26,19 +26,19 @@
         }
         .station-header {
             font-size: 15px;
-            color: #ffbb00;
+            color: #00ffcc;
             font-weight: 900;
             margin-bottom: 16px;
             text-transform: uppercase;
             letter-spacing: 2px;
-            text-shadow: 0 0 10px rgba(255, 187, 0, 0.6);
+            text-shadow: 0 0 10px rgba(0, 255, 204, 0.6);
         }
         .screen-container {
             width: 100%;
-            height: 130px;
+            height: 110px;
             background: #000;
             border-radius: 12px;
-            border: 1px solid #ff7700;
+            border: 1px solid #00ffcc;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -52,15 +52,15 @@
             display: flex;
             gap: 6px;
             align-items: flex-end;
-            height: 50px;
-            margin-bottom: 10px;
+            height: 40px;
+            margin-bottom: 8px;
         }
         .bar {
             width: 7px;
-            background: linear-gradient(to top, #ff4500, #ffbb00);
+            background: #00ffcc;
             height: 10px;
             border-radius: 3px;
-            box-shadow: 0 0 10px #ff7700;
+            box-shadow: 0 0 10px #00ffcc;
             transition: height 0.2s ease;
         }
         .playing .bar {
@@ -74,24 +74,26 @@
 
         @keyframes pulseWave {
             0% { height: 10px; }
-            100% { height: 50px; }
+            100% { height: 40px; }
         }
 
         .status-text {
-            font-size: 12px;
-            color: #ffbb00;
+            font-size: 11px;
+            color: #00ffcc;
             font-weight: bold;
             letter-spacing: 1.5px;
         }
 
         .info-box {
             font-size: 13px;
-            color: #dddddd;
-            background: rgba(255, 119, 0, 0.1);
-            padding: 10px;
+            color: #ffffff;
+            background: rgba(0, 255, 204, 0.1);
+            padding: 12px;
             border-radius: 8px;
             margin-bottom: 18px;
-            border: 1px solid rgba(255, 187, 0, 0.3);
+            border: 1px solid rgba(0, 255, 204, 0.3);
+            word-break: break-word;
+            min-height: 25px;
         }
         .controls {
             display: flex;
@@ -99,7 +101,7 @@
             gap: 14px;
         }
         button {
-            background: linear-gradient(135deg, #ff7700, #ffbb00);
+            background: #00ffcc;
             color: #000;
             border: none;
             padding: 12px 28px;
@@ -108,12 +110,12 @@
             cursor: pointer;
             font-size: 14px;
             transition: all 0.2s ease;
-            box-shadow: 0 0 15px rgba(255, 119, 0, 0.5);
+            box-shadow: 0 0 15px rgba(0, 255, 204, 0.5);
             text-transform: uppercase;
         }
         button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 0 22px #ffbb00;
+            box-shadow: 0 0 22px #00ffcc;
         }
     </style>
 </head>
@@ -130,10 +132,11 @@
                 <div class="bar"></div>
                 <div class="bar"></div>
             </div>
-            <div class="status-text" id="statusLabel">SISTEMA EN ESPERA</div>
+            <div class="status-text" id="statusLabel">EN ESPERA</div>
         </div>
 
-        <div class="info-box" id="songInfo">Conectado a servidor seguro</div>
+        <!-- Aquí aparecerá el artista y la canción en vivo -->
+        <div class="info-box" id="songInfo">Cargando información del DJ...</div>
 
         <div class="controls">
             <button onclick="playRadio()">▶ PLAY</button>
@@ -151,7 +154,6 @@
 
         function playRadio() {
             audio.play().catch(e => console.log("Error:", e));
-            songInfo.innerText = "Transmisión en vivo activada";
             statusLabel.innerText = "EN DIRECTO";
             playerCard.classList.add('playing');
         }
@@ -159,10 +161,43 @@
         function stopRadio() {
             audio.pause();
             audio.currentTime = 0;
+            statusLabel.innerText = "EN ESPERA";
             songInfo.innerText = "Transmisión detenida";
-            statusLabel.innerText = "SISTEMA EN ESPERA";
             playerCard.classList.remove('playing');
         }
+
+        // Función para consultar los metadatos de la canción y DJ en vivo
+        function updateMetadata() {
+            // Nota: Usamos un servicio proxy CORS público para leer los datos JSON de tu servidor Icecast/Shoutcast de forma segura
+            fetch('https://api.allorigins.win/get?url=' + encodeURIComponent('https://radio.technoplayerserver.com/status-json.xsl'))
+                .then(response => response.json())
+                .then(data => {
+                    try {
+                        const parsed = JSON.parse(data.contents);
+                        // Busca la fuente activa en el servidor
+                        const source = Array.isArray(parsed.icestats.source) 
+                            ? parsed.icestats.source.find(s => s.listenurl.includes('8010')) 
+                            : parsed.icestats.source;
+
+                        if (source && source.title) {
+                            songInfo.innerText = "🎵 " + source.title;
+                        } else {
+                            songInfo.innerText = "🎵 Radio Catrachos de Corazon (En Vivo)";
+                        }
+                    } catch (e) {
+                        // Si el servidor usa otro formato, dejamos un texto predeterminado activo
+                        songInfo.innerText = "🎵 Transmitiendo en directo";
+                    }
+                })
+                .catch(() => {
+                    // Mensaje por si la red bloquea temporalmente la consulta externa
+                    songInfo.innerText = "🎵 Radio Catrachos de Corazon";
+                });
+        }
+
+        // Actualiza el nombre de la canción cada 10 segundos automáticamente
+        setInterval(updateMetadata, 10000);
+        updateMetadata();
     </script>
 </body>
 </html>
