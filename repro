@@ -2,91 +2,169 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Radio Catrachos de Corazon</title>
+    <title>Radio Catrachos de Corazon - RADC Player</title>
     <style>
         body {
             margin: 0;
-            background-color: #0b0b0b;
+            background-color: #030305;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Arial, sans-serif;
         }
-        .player-container {
-            position: relative;
-            width: 320px;
-            height: 220px;
-            background: #111;
-            border-radius: 12px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.8);
-            overflow: hidden;
+        .player-card {
+            width: 420px;
+            background: linear-gradient(145deg, #110d08, #050302);
             border: 2px solid #d4af37;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end;
-        }
-        .player-overlay {
-            width: 100%;
-            background: rgba(0, 0, 0, 0.85);
-            padding: 12px;
+            border-radius: 20px;
+            box-shadow: 0 0 40px rgba(212, 175, 55, 0.45), inset 0 0 20px rgba(212, 175, 55, 0.15);
+            padding: 24px;
             box-sizing: border-box;
+            text-align: center;
+            color: #fff;
+        }
+        .station-header {
+            font-size: 14px;
+            color: #d4af37;
+            font-weight: 900;
+            margin-bottom: 14px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(212, 175, 55, 0.6);
+        }
+        .screen-container {
+            width: 100%;
+            height: 110px;
+            background: #000;
+            border-radius: 12px;
+            border: 1px solid #d4af37;
             display: flex;
             flex-direction: column;
+            justify-content: center;
             align-items: center;
+            margin-bottom: 16px;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.9);
+        }
+        .wave-bars {
+            display: flex;
+            gap: 6px;
+            align-items: flex-end;
+            height: 40px;
+            margin-bottom: 8px;
+        }
+        .bar {
+            width: 7px;
+            background: #d4af37;
+            height: 10px;
+            border-radius: 3px;
+            box-shadow: 0 0 10px #d4af37;
+            transition: height 0.2s ease;
+        }
+        .playing .bar {
+            animation: pulseWave 0.7s infinite alternate ease-in-out;
+        }
+        .playing .bar:nth-child(1) { animation-delay: 0.1s; }
+        .playing .bar:nth-child(2) { animation-delay: 0.3s; }
+        .playing .bar:nth-child(3) { animation-delay: 0.5s; }
+        .playing .bar:nth-child(4) { animation-delay: 0.2s; }
+        .playing .bar:nth-child(5) { animation-delay: 0.4s; }
+
+        @keyframes pulseWave {
+            0% { height: 10px; }
+            100% { height: 40px; }
+        }
+
+        .status-text {
+            font-size: 11px;
+            color: #d4af37;
+            font-weight: bold;
+            letter-spacing: 1.5px;
+        }
+        .info-box {
+            font-size: 13px;
+            color: #ffffff;
+            background: rgba(212, 175, 55, 0.1);
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 18px;
+            border: 1px solid rgba(212, 175, 55, 0.3);
         }
         .controls {
             display: flex;
-            gap: 10px;
-            margin-bottom: 8px;
+            justify-content: center;
+            gap: 14px;
         }
         button {
-            background: #d4af37;
+            background: linear-gradient(135deg, #d4af37, #aa820a);
             color: #000;
             border: none;
-            padding: 6px 16px;
-            font-weight: bold;
-            border-radius: 4px;
+            padding: 12px 28px;
+            font-weight: 900;
+            border-radius: 8px;
             cursor: pointer;
             font-size: 14px;
+            transition: all 0.2s ease;
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.5);
+            text-transform: uppercase;
         }
         button:hover {
-            background: #ffc72c;
-        }
-        .now-playing {
-            color: #fff;
-            font-size: 12px;
-            text-align: center;
+            transform: translateY(-2px);
+            box-shadow: 0 0 25px #d4af37;
         }
     </style>
 </head>
 <body>
 
-    <div class="player-container">
-        <div class="player-overlay">
-            <div class="controls">
-                <button onclick="playRadio()">▶ Play</button>
-                <button onclick="stopRadio()">⏹ Stop</button>
+    <div class="player-card" id="playerCard">
+        <div class="station-header">Radio Catrachos de Corazon</div>
+        
+        <div class="screen-container">
+            <div class="wave-bars">
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
             </div>
-            <div class="now-playing" id="songInfo">Radio Catrachos de Corazon</div>
+            <div class="status-text" id="statusLabel">ESTACIÓN ID: 8010</div>
+        </div>
+
+        <div class="info-box" id="songInfo">Presiona Play para escuchar en vivo</div>
+
+        <div class="controls">
+            <button onclick="playRadio()">▶ PLAY</button>
+            <button onclick="stopRadio()">⏹ STOP</button>
         </div>
     </div>
 
-    <audio id="radioStream" src="https://radio.technoplayerserver.com/8010/stream"></audio>
+    <!-- Enlace directo de streaming proporcionado -->
+    <audio id="radioStream" src="https://radio.technoplayerserver.com/8010/stream" preload="none"></audio>
 
     <script>
         const audio = document.getElementById('radioStream');
         const songInfo = document.getElementById('songInfo');
+        const statusLabel = document.getElementById('statusLabel');
+        const playerCard = document.getElementById('playerCard');
 
         function playRadio() {
-            audio.play().catch(e => console.log("Error:", e));
-            songInfo.innerText = "Reproduciendo en vivo...";
+            audio.load();
+            audio.play().then(() => {
+                statusLabel.innerText = "EN DIRECTO";
+                songInfo.innerText = "🎵 Reproduciendo señal en vivo";
+                playerCard.classList.add('playing');
+            }).catch(e => {
+                console.log("Error al reproducir:", e);
+                songInfo.innerText = "⚠️ Error al conectar con el servidor";
+            });
         }
 
         function stopRadio() {
             audio.pause();
             audio.currentTime = 0;
+            statusLabel.innerText = "ESTACIÓN ID: 8010";
             songInfo.innerText = "Transmisión detenida";
+            playerCard.classList.remove('playing');
         }
     </script>
 </body>
