@@ -2,176 +2,326 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Radio Catrachos de Corazon - RADC Player</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reproductor Radio</title>
     <style>
-        body {
+        * {
+            box-sizing: border-box;
             margin: 0;
-            background-color: #030305;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #050508;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            font-family: 'Segoe UI', Arial, sans-serif;
-        }
-        /* Contenedor principal que simula la tarjeta de la imagen */
-        .player-card {
-            width: 420px;
-            background: linear-gradient(145deg, #110d08, #050302);
-            border: 2px solid #d4af37; /* Borde dorado elegante */
-            border-radius: 20px;
-            box-shadow: 0 0 40px rgba(212, 175, 55, 0.4), inset 0 0 20px rgba(212, 175, 55, 0.15);
-            padding: 24px;
-            box-sizing: border-box;
-            text-align: center;
+            min-height: 100vh;
             color: #fff;
-            position: relative;
-            overflow: hidden;
         }
-        .station-header {
-            font-size: 13px;
-            color: #d4af37;
-            font-weight: 900;
-            margin-bottom: 12px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            text-shadow: 0 0 10px rgba(212, 175, 55, 0.6);
-        }
-        /* Sección visual que simula la pantalla inferior de tu imagen */
-        .screen-container {
-            width: 100%;
-            height: 110px;
-            background: #000;
-            border-radius: 12px;
-            border: 1px solid #d4af37;
+
+        .player-container {
+            width: 700px;
+            background: #080a0f;
+            border: 3px solid #00f0ff;
+            border-radius: 24px;
+            padding: 20px;
+            box-shadow: 0 0 20px #ff007f, inset 0 0 15px #00f0ff;
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            gap: 15px;
+        }
+
+        .top-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr 1fr;
+            gap: 15px;
+        }
+
+        .card {
+            border: 1.5px solid #00f0ff;
+            border-radius: 12px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.6);
+            box-shadow: inset 0 0 8px rgba(0, 240, 255, 0.3);
+            display: flex;
+            flex-direction: column;
             align-items: center;
-            margin-bottom: 16px;
-            position: relative;
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.9);
-        }
-        .wave-bars {
-            display: flex;
-            gap: 6px;
-            align-items: flex-end;
-            height: 40px;
-            margin-bottom: 8px;
-        }
-        .bar {
-            width: 7px;
-            background: #d4af37;
-            height: 10px;
-            border-radius: 3px;
-            box-shadow: 0 0 10px #d4af37;
-            transition: height 0.2s ease;
-        }
-        .playing .bar {
-            animation: pulseWave 0.7s infinite alternate ease-in-out;
-        }
-        .playing .bar:nth-child(1) { animation-delay: 0.1s; }
-        .playing .bar:nth-child(2) { animation-delay: 0.3s; }
-        .playing .bar:nth-child(3) { animation-delay: 0.5s; }
-        .playing .bar:nth-child(4) { animation-delay: 0.2s; }
-        .playing .bar:nth-child(5) { animation-delay: 0.4s; }
-
-        @keyframes pulseWave {
-            0% { height: 10px; }
-            100% { height: 40px; }
-        }
-
-        .status-text {
-            font-size: 11px;
-            color: #d4af37;
-            font-weight: bold;
-            letter-spacing: 1.5px;
-        }
-
-        .info-box {
-            font-size: 13px;
-            color: #ffffff;
-            background: rgba(212, 175, 55, 0.1);
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 18px;
-            border: 1px solid rgba(212, 175, 55, 0.3);
-        }
-        .controls {
-            display: flex;
             justify-content: center;
-            gap: 14px;
+            text-align: center;
         }
-        button {
-            background: linear-gradient(135deg, #d4af37, #aa820a);
-            color: #000;
-            border: none;
-            padding: 12px 28px;
-            font-weight: 900;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: all 0.2s ease;
-            box-shadow: 0 0 15px rgba(212, 175, 55, 0.5);
+
+        .card-title {
+            font-size: 11px;
+            letter-spacing: 2px;
+            color: #00f0ff;
+            border-bottom: 1px solid #00f0ff;
+            padding-bottom: 2px;
+            margin-bottom: 8px;
             text-transform: uppercase;
         }
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 0 25px #d4af37;
+
+        .gradient-text {
+            font-weight: bold;
+            background: linear-gradient(90deg, #a100ff, #ff007f, #00f0ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Logo Central Giratorio */
+        .logo-center {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .logo-ring {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            border: 2px solid #00f0ff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 0 10px #00f0ff, inset 0 0 10px #00f0ff;
+            overflow: hidden;
+            background: #000;
+        }
+
+        .logo-ring img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+            animation: spin 12s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .history-list {
+            list-style: none;
+            font-size: 11px;
+            text-align: left;
+            width: 100%;
+            max-height: 90px;
+            overflow-y: auto;
+        }
+
+        .history-list li {
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .bottom-panel {
+            border: 1.5px solid #00f0ff;
+            border-radius: 12px;
+            padding: 15px 20px;
+            background: rgba(0, 0, 0, 0.6);
+            box-shadow: inset 0 0 8px rgba(0, 240, 255, 0.3);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .track-title {
+            text-align: right;
+            font-weight: bold;
+            font-size: 18px;
+            color: #ff007f;
+            text-shadow: 0 0 5px #ff007f;
+            text-transform: uppercase;
+        }
+
+        .progress-bar-placeholder {
+            width: 100%;
+            height: 6px;
+            background: repeating-linear-gradient(90deg, #ff9900 0 6px, transparent 6px 10px);
+            border-radius: 3px;
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .btn {
+            background: transparent;
+            border: 1px solid #ffffff;
+            color: #ffffff;
+            padding: 6px 24px;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            background: #00f0ff;
+            color: #000;
+            box-shadow: 0 0 10px #00f0ff;
+        }
+
+        .volume-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 50%;
+        }
+
+        .volume-slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: linear-gradient(90deg, #00f0ff, #a100ff, #ff007f);
+            outline: none;
+        }
+
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #00f0ff;
+            cursor: pointer;
+            box-shadow: 0 0 8px #00f0ff;
+        }
+
+        .footer-icons {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            border: 1.5px solid #00f0ff;
+            border-radius: 20px;
+            padding: 8px;
+            background: rgba(0, 0, 0, 0.6);
+        }
+
+        .cube-icon {
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(45deg, #d4af37, #fff6a5);
+            transform: rotate(45deg);
+            box-shadow: 0 0 5px #d4af37;
         }
     </style>
 </head>
 <body>
 
-    <div class="player-card" id="playerCard">
-        <div class="station-header">Techno Player - Radio Catrachos</div>
-        
-        <div class="screen-container">
-            <div class="wave-bars">
-                <div class="bar"></div>
-                <div class="bar"></div>
-                <div class="bar"></div>
-                <div class="bar"></div>
-                <div class="bar"></div>
+    <div class="player-container">
+        <div class="top-grid">
+            <!-- Bloque Izquierdo -->
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <div class="card">
+                    <span class="card-title">RADIO</span>
+                    <span class="gradient-text" style="font-size: 16px;">ONLINE</span>
+                </div>
+                <div class="card">
+                    <span class="card-title">AS CULTARORI</span>
+                    <div style="font-size: 13px; margin-bottom: 8px;">
+                        <span style="color: #a100ff;">🎧 Live:</span> <span id="listeners" style="color: #ff9900;">1</span>
+                    </div>
+                    <span class="card-title">ZODIAC</span>
+                    <span class="gradient-text" style="font-size: 13px;">Scorpion</span>
+                </div>
             </div>
-            <div class="status-text" id="statusLabel">ESTACIÓN ID: 8010</div>
+
+            <!-- Bloque Central: Logo Giratorio -->
+            <div class="logo-center">
+                <div class="logo-ring">
+                    <img src="logo.jpg" alt="Logo Emisora">
+                </div>
+            </div>
+
+            <!-- Bloque Derecho -->
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <div class="card">
+                    <span class="card-title">DATA / ORA</span>
+                    <span id="clock-time" class="gradient-text" style="font-size: 18px; font-weight: bold;">00:00:00</span>
+                    <span id="clock-date" style="font-size: 11px; color: #00f0ff; margin-top: 4px;">-- ---. ----</span>
+                </div>
+                <div class="card" style="align-items: flex-start;">
+                    <span class="card-title" style="width: 100%; text-align: center;">HISTORY</span>
+                    <ul class="history-list">
+                        <li style="color: #00f0ff;">1. EN VIVO</li>
+                        <li style="color: #ff007f;">2. EMISORA ONLINE</li>
+                        <li style="color: #a100ff;">3. RADIO CATRACHOS</li>
+                    </ul>
+                </div>
+            </div>
         </div>
 
-        <div class="info-box" id="songInfo">Radio en Línea Activa</div>
+        <!-- Panel Inferior: Reproductor -->
+        <div class="bottom-panel">
+            <div class="track-title" id="track-title">EN VIVO</div>
+            <div class="progress-bar-placeholder"></div>
+            <div class="controls">
+                <button class="btn" onclick="playAudio()">PLAY</button>
+                <div class="volume-container">
+                    <input type="range" class="volume-slider" id="volume" min="0" max="1" step="0.01" value="1" oninput="setVolume(this.value)">
+                    <span id="vol-percentage" style="font-size: 12px; color: #ff007f;">100%</span>
+                </div>
+                <button class="btn" onclick="stopAudio()">STOP</button>
+            </div>
+        </div>
 
-        <div class="controls">
-            <button onclick="playRadio()">▶ PLAY</button>
-            <button onclick="stopRadio()">⏹ STOP</button>
+        <div class="footer-icons">
+            <div class="cube-icon"></div>
+            <div class="cube-icon"></div>
+            <div class="cube-icon"></div>
         </div>
     </div>
 
-    <!-- Enlace directo de tu streaming oficial -->
-    <audio id="radioStream" src="https://radio.technoplayerserver.com/8010/stream" preload="none"></audio>
+    <!-- Elemento de Audio -->
+    <audio id="radio-stream" src="https://radio.technoplayerserver.com/8010/stream" preload="none"></audio>
 
     <script>
-        const audio = document.getElementById('radioStream');
-        const songInfo = document.getElementById('songInfo');
-        const statusLabel = document.getElementById('statusLabel');
-        const playerCard = document.getElementById('playerCard');
+        const audio = document.getElementById('radio-stream');
+        const volPercentage = document.getElementById('vol-percentage');
 
-        function playRadio() {
-            audio.load();
-            audio.play().then(() => {
-                statusLabel.innerText = "EN DIRECTO";
-                songInfo.innerText = "🎵 Reproduciendo señal en vivo";
-                playerCard.classList.add('playing');
-            }).catch(e => {
-                console.log("Error al reproducir:", e);
-                songInfo.innerText = "⚠️ Error de conexión con la señal";
-            });
+        function playAudio() {
+            audio.play();
         }
 
-        function stopRadio() {
+        function stopAudio() {
             audio.pause();
             audio.currentTime = 0;
-            statusLabel.innerText = "ESTACIÓN ID: 8010";
-            songInfo.innerText = "Transmisión detenida";
-            playerCard.classList.remove('playing');
         }
+
+        function setVolume(val) {
+            audio.volume = val;
+            volPercentage.textContent = Math.round(val * 100) + '%';
+        }
+
+        // Reloj en tiempo real
+        function updateClock() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            
+            document.getElementById('clock-time').textContent = `${hours}:${minutes}:${seconds}`;
+
+            const months = ['ENE', 'FEB', 'MAR', 'ABR', 'MAY', 'JUN', 'JUL', 'AGO', 'SEP', 'OCT', 'NOV', 'DIC'];
+            const day = now.getDate();
+            const month = months[now.getMonth()];
+            const year = now.getFullYear();
+
+            document.getElementById('clock-date').textContent = `${day} ${month}. ${year}`;
+        }
+
+        setInterval(updateClock, 1000);
+        updateClock();
     </script>
 </body>
 </html>
